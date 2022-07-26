@@ -19,7 +19,7 @@ sp = spotipy.Spotify(
 )
 
 
-def add_track(url):
+def add_queue(url):
     try:
         sp.add_to_queue(uri=url, device_id=sp.devices()["devices"][0]["id"])
         return "Added track to queue"
@@ -27,7 +27,7 @@ def add_track(url):
         return f"Request raised an Error: {e}"
 
 
-def add_track__(playlist_id, track_id: str):
+def add_track(playlist_id, track_id: str):
     track = []
     if track_id.startswith("https://open.spotify.com/track/"):
         _track = track_id[31:][:22]

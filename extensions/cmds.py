@@ -1,7 +1,8 @@
+from cv2 import add
 from twitchio.ext import commands
 import json
 
-from utils import resume_track, search, now_playing, prev_track, skip_track, _volume, pause_track, add_track
+from utils import resume_track, search, now_playing, prev_track, skip_track, _volume, pause_track, add_track, add_queue
 
 
 with open("data.json", "r", encoding="utf-8") as f:
@@ -33,6 +34,18 @@ class spotify_commands(commands.Cog):
     @commands.command(name="song", aliases=["nowplaying", "np"])
     async def now_playing(self, ctx):
         await ctx.send(f"Now playing: {''.join(now_playing())}")
+
+    @commands.command(name="add_queue", aliases=["add_to_queue"])
+    async def add_queue(self, ctx, track: str):
+        try:
+            add_queue(url=track)
+            await ctx.send(f"{ctx.author.name}, Added your track to queue")
+        except Exception as e:
+            err = str(e)
+            if "Premium required" in err:
+                await ctx.send(f"{ctx.author.name}, Request raised an Error: PREMIUM REQUIRED")
+            else:
+                print(e)
 
     # ! SPOTIFY PREMIUM REQUIRED
     @commands.command(name="prev_track", aliases=["prev", "previous"])
