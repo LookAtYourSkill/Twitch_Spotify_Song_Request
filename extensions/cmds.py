@@ -17,7 +17,8 @@ class spotify_commands(commands.Cog):
     async def play_track(self, ctx, track: str):
         try:
             add_track(playlist_id=spotify_data["spotify"]["playlist_id"], track_id=track)
-            await ctx.send(f"{ctx.author.name}, Added your track to playlist")
+            await ctx.send(f"{ctx.author.name}, Added your track ( {search(track)} ) to playlist")
+            await ctx.author.send(f"{ctx.author.name}, track '{track}' added to playlist for {ctx.author.channel.name}")
         except Exception as e:
             err = str(e)
             if "Premium required" in err:
@@ -28,8 +29,7 @@ class spotify_commands(commands.Cog):
     @commands.command(name="search", aliases=["s"])
     async def search(self, ctx, *, query):
         items = search(query)
-        link = items[0]['external_urls']['spotify']
-        await ctx.send(f"Search results for {query}: {link}")
+        await ctx.send(f"Search results for '{query}': {items}")
 
     @commands.command(name="song", aliases=["nowplaying", "np"])
     async def now_playing(self, ctx):
