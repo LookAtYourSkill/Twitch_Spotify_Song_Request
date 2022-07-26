@@ -1,43 +1,21 @@
-from ast import expr_context
 from twitchio.ext import commands
 import json
-import spotipy
-from spotipy.oauth2 import SpotifyOAuth
 
-from utils import resume_track, search, now_playing, prev_track, skip_track, _volume, pause_track, add_track__
+from utils import resume_track, search, now_playing, prev_track, skip_track, _volume, pause_track, add_track
 
 
 with open("data.json", "r", encoding="utf-8") as f:
     spotify_data = json.load(f)
 
 
-scope = 'playlist-modify-public playlist-modify-private user-read-currently-playing user-read-playback-state user-modify-playback-state'
-
-sp = spotipy.Spotify(
-    auth_manager=SpotifyOAuth(
-        scope=scope,
-        client_id=spotify_data["spotify"]["client_id"],
-        client_secret=spotify_data["spotify"]["client_secret"],
-        redirect_uri=spotify_data["spotify"]["redirect_uri"],
-    )
-)
-
-
 class spotify_commands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # ! SPOTIFY PREMIUM REQUIRED
     @commands.command(name="add", aliases=["add_track", "add_song", "play"])
-    async def play_track(self, ctx, track_id):
-        print(sp.me())
-        track = []
-        if track_id.startswith("https://open.spotify.com/track/"):
-            track = track[34:]
-        elif track_id.startswith("spotify:track:"):
-            track = track[13:]
+    async def play_track(self, ctx, track: str):
         try:
-            add_track__(playlist_id=spotify_data["spotify"]["playlist_id"], track_id=track)
+            add_track(playlist_id=spotify_data["spotify"]["playlist_id"], track_id=track)
             await ctx.send(f"{ctx.author.name}, Added your track to playlist")
         except Exception as e:
             err = str(e)
@@ -134,24 +112,6 @@ class spotify_commands(commands.Cog):
                     print(e)
         else:
             await ctx.send("You are not a mod")
-
-    @commands.command()
-    async def track_add(self, ctx, track_id):
-        track = []
-        if track_id.startswith("https://open.spotify.com/track/"):
-            track = track[34:]
-        elif track_id.startswith("spotify:track:"):
-            track = track[13:]
-        try:
-            result = sp.playlist_add_items(spotify_data["spotify"]["playlist_id"], track)
-            print(result)
-            await ctx.send(f"{ctx.author.name}, Added your track to playlist")
-        except Exception as e:
-            err = str(e)
-            if "Premium required" in err:
-                await ctx.send(f"{ctx.author.name}, Request raised an Error: PREMIUM REQUIRED")
-            else:
-                print(e)
 
 
 def prepare(bot):
