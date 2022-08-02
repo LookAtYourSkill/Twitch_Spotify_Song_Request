@@ -6,7 +6,6 @@ with open("data.json", "r") as f:
     data = json.load(f)
 
 bot = commands.Bot(prefix='?', initial_channels=['lookatyourskill'], token=data["twitch"]["token"])
-# refresh token: mnl4jd1sumycsc4jw10tvzxwwus9twenj04vtmhkolci87pwyl
 
 for filename in os.listdir('./extensions'):
     if filename.endswith('.py'):
